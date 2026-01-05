@@ -22,7 +22,7 @@ def fetch_raw_data():
     return df_freq, df_sev
 
 
-def preprocess_actuarial_data(df_freq, df_sev):
+def preprocess_data(df_freq, df_sev):
     """
     Cleans, joins, and engineers features for Frequency-Severity modeling.
 
@@ -65,7 +65,7 @@ def preprocess_actuarial_data(df_freq, df_sev):
 def main():
     """Execute the data pipeline and print summary statistics."""
     df_f, df_s = fetch_raw_data()
-    processed_df = preprocess_actuarial_data(df_f, df_s)
+    processed_df = preprocess_data(df_f, df_s)
 
     train, test = train_test_split(
         processed_df, test_size=0.2, random_state=42

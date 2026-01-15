@@ -1,14 +1,15 @@
 import pandas as pd
 import numpy as np
 from sklearn.datasets import fetch_openml
+import config
 
 def fetch_raw_data():
     """
     Loads the standard French Motor Third-Party Liability datasets.
     """
     print("Downloading dataset from OpenML...")
-    freq = fetch_openml(data_id=41214, as_frame=True, parser='auto').frame
-    sev = fetch_openml(data_id=41215, as_frame=True, parser='auto').frame
+    freq = fetch_openml(data_id=config.OPENML_FREQUENCY_DATA_ID, as_frame=True, parser='auto').frame
+    sev = fetch_openml(data_id=config.OPENML_SEVERITY_DATA_ID, as_frame=True, parser='auto').frame
     
     # Standardise ID columns
     freq['IDpol'] = freq['IDpol'].astype(int)
@@ -42,9 +43,9 @@ def preprocess_data(df_freq, df_sev):
     )
 
     # 5. Standard Filtering
-    df = df[df['Exposure'] > 0.003].copy()
-    df['Exposure'] = df['Exposure'].clip(upper=1.0)
-    df = df[df['ClaimNb'] < 10].copy()
+    df = df[df['Exposure'] > config.MIN_EXPOSURE].copy()
+    df['Exposure'] = df['Exposure'].clip(upper=config.MAX_EXPOSURE)
+    df = df[df['ClaimNb'] < config.MAX_CLAIM_NB].copy()
 
     return df
 
@@ -58,20 +59,20 @@ def bin_features(df):
     # Now this will work because we renamed 'DrivAge' to 'DriverAge' above
     df['DriverAge_Bin'] = pd.cut(
         df['DriverAge'], 
-        bins=[0, 21, 25, 30, 40, 50, 60, 75, 120], 
-        labels=['18-21', '22-25', '26-30', '31-40', '41-50', '51-60', '61-75', '75+'],
+        bins=config.DRIVER_AGE_BINS, 
+        labels=config.DRIVER_AGE_LABELS,
         include_lowest=True
     )
 
     # --- 2. Vehicle Age ---
     df['VehAge_Bin'] = pd.cut(
         df['VehAge'], 
-        bins=[-1, 1, 4, 10, 20, 100], 
-        labels=['New (0-1)', '2-4', '5-10', '11-20', '20+']
+        bins=config.VEHICLE_AGE_BINS, 
+        labels=config.VEHICLE_AGE_LABELS
     )
 
     # --- 3. Vehicle Power ---
-    df['VehPower_Bin'] = df['VehPower'].apply(lambda x: f'{x}' if x < 10 else '10+')
+    df['VehPower_Bin'] = df['VehPower'].apply(lambda x: f'{x}' if x < config.VEHICLE_POWER_THRESHOLD else '10+')
 
     # --- 4. Convert Categoricals to Strings ---
     categorical_cols = ['VehBrand', 'VehGas', 'Region', 'Area']
@@ -81,11 +82,11 @@ def bin_features(df):
     # ... inside bin_features ...
 
     # --- 5. Group Small Brands (Force B12 to disappear) ---
-    top_brands = df['VehBrand'].value_counts().nlargest(5).index
+    top_brands = df['VehBrand'].value_counts().nlargest(config.TOP_BRANDS_COUNT).index
     
-    # Logic: Keep it ONLY if it's in Top 5 AND it is NOT 'B12'
+    # Logic: Keep it ONLY if it's in Top N AND it is NOT the excluded brand
     df['VehBrand_Bin'] = df['VehBrand'].apply(
-        lambda x: x if (x in top_brands and x != 'B12') else 'Other'
+        lambda x: x if (x in top_brands and x != config.EXCLUDED_BRAND) else 'Other'
     )
     
     # Use 'VehBrand_Bin' in your models instead of 'VehBrand'

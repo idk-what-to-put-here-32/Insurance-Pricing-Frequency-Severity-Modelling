@@ -12,7 +12,6 @@ matplotlib
 
 # Interactive dashboard framework
 streamlit
-altair<5.0.0
 
 # Interactive plotting library
 plotly>=3.7.0

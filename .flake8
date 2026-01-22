@@ -1,0 +1,19 @@
+[flake8]
+# 100 chars is the modern standard (79 is too narrow, 120 is too wide)
+max-line-length = 100
+
+# Ignore rules that conflict with modern formatters like Black
+# E203: Whitespace before ':'
+# W503: Line break before binary operator
+# W293: Blank line contains whitespace (common in multi-line strings/CSS)
+extend-ignore = E203, W503, W293
+
+# Exclude standard junk folders
+exclude =
+    .git,
+    __pycache__,
+    venv,
+    env,
+    .env,
+    plots,
+    dist

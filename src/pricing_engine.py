@@ -330,7 +330,11 @@ def plot_lorenz_curve(
 
     # Gini = 1 - 2*A where A is area under Lorenz curve
     # Higher Gini = better risk differentiation
-    area_under_curve = np.trapezoid(cum_losses, cum_exposure)
+    # Version-agnostic: NumPy 2.0 uses trapezoid, 1.x uses trapz
+    if hasattr(np, "trapezoid"):
+        area_under_curve = np.trapezoid(cum_losses, cum_exposure)
+    else:
+        area_under_curve = np.trapz(cum_losses, cum_exposure)
     gini = 1 - (2 * area_under_curve)
 
     fig, ax = plt.subplots(figsize=(5, 4))
@@ -428,7 +432,11 @@ def calculate_gini(df, actual_col, pred_col, exposure_col="Exposure"):
     # Gini = 1 - 2*A where A is area under Lorenz curve
     # Perfect model (all losses in highest risk policies): Gini → 1
     # No differentiation (losses proportional to exposure): Gini → 0
-    area_under_curve = np.trapezoid(cum_actual, cum_exposure)
+    # Version-agnostic: NumPy 2.0 uses trapezoid, 1.x uses trapz
+    if hasattr(np, "trapezoid"):
+        area_under_curve = np.trapezoid(cum_actual, cum_exposure)
+    else:
+        area_under_curve = np.trapz(cum_actual, cum_exposure)
     gini = 1 - (2 * area_under_curve)
 
     return gini

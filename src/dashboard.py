@@ -414,6 +414,20 @@ with tab1:
         )
         st.pyplot(fig_com, use_container_width=True)
 
+    # Add explanatory text below the charts
+    st.markdown(
+        """
+        ---
+        **How to read these charts:**
+        The Lift Chart segments the portfolio into 10 risk buckets (Deciles) from lowest to
+        highest predicted risk.
+        * **Steep Slope:** A steep upward slope confirms the model successfully differentiates
+        between safe (Decile 1) and risky (Decile 10) drivers.
+        * **Close Alignment:** If the **Green line** (Predicted) closely tracks the **Blue line**
+        (Actual), the model is accurately calibrated.
+        """
+    )
+
     # Add Lorenz Curve centered below the lift charts
     st.markdown("---")
     c1, c2, c3 = st.columns([1, 2, 1])
@@ -424,6 +438,12 @@ with tab1:
             df=test_results, pred_col="Final_Price", return_fig=True
         )
         st.pyplot(lorenz_fig, use_container_width=True)
+        st.info(
+            "This chart measures the model's "
+            "ability to segment risk. The Gini Coefficient scores this segmentation "
+            "(0 = Random, 1 = Perfect). A higher Gini means the model is better at "
+            "identifying high-risk drivers."
+        )
 
 with tab2:
     st.subheader("Detailed Analysis")
@@ -449,10 +469,18 @@ with tab2:
     # Display the plot
     st.pyplot(oneway_fig, use_container_width=True)
 
+    # Add explanatory text for non-technical users
+    st.info(
+        "These charts compare the Actual Risk (Red), "
+        "the Technical Model (Blue), and the Final Commercial Price (Green). "
+        "Gaps between Blue and Green indicate where Actuarial Strategy "
+        "(Loadings/Discounts) has been applied."
+    )
+
     # Display detailed table for selected feature's key bin (if Driver Age selected)
     if selected_analysis == "Driver Age":
         st.markdown("---")
-        st.subheader("📋 Verification: Driver Age 18-21 Bin")
+        st.subheader("Verification: Driver Age 18-21 Bin")
 
         driver_18_21 = feature_agg[feature_agg["DriverAge_Bin"] == "18-21"].iloc[0]
 
@@ -488,6 +516,13 @@ with tab3:
     dislocation_fig = pricing_engine.plot_dislocation_histogram(df=test_results, return_fig=True)
 
     st.pyplot(dislocation_fig, use_container_width=True)
+
+    # Add explanatory text for non-technical users
+    st.info(
+        "This chart shows the distribution of price changes. "
+        "Positive values indicate customers paying more than the technical premium (Loadings), "
+        "while negative values indicate customers paying less (Discounts)."
+    )
 
     # Calculate metrics
     test_results["PctChange"] = (

@@ -10,7 +10,7 @@
 
 This project is an end-to-end actuarial pricing pipeline and interactive simulation tool for French Motor Third-Party Liability (MTPL) insurance. It implements a Frequency-Severity GLM architecture, Isotonic Calibration, and a Streamlit dashboard for Commercial Dislocation Analysis.
 
-The tool bridges the gap between technical modelling and commercial strategy by allowing users to adjust actuarial loadings and visualise the impact on the model's Technical and Commercial Prices via Lift Charts, Lorenz Curves, and Dislocation Histograms. https://insurance-pricing-dashboard.streamlit.app/
+The tool bridges the gap between technical modelling and commercial strategy by allowing users to adjust actuarial loadings and visualise the impact on the model's Technical and Commercial Prices via Lift Charts, Lorenz Curves, and Dislocation Histograms. View the dashboard: https://insurance-pricing-dashboard.streamlit.app/
 
 The project utilises the industry-standard French Motor datasets (ID 41214/41215) to demonstrate the full Technical Pricing Cycle: Data Preprocessing $\rightarrow$ GLM Modelling $\rightarrow$ Calibration $\rightarrow$ Commercial Analysis.
 
@@ -22,8 +22,8 @@ The engine implements a decoupled Frequency-Severity GLM structure to determine 
 * **Frequency (Poisson GLM):** Utilises a log-link function to model claim counts, ensuring non-negative arrival rates.
 * **Severity (Gamma GLM):** Models the average cost per claim for policies where $ClaimNb > 0$. Includes Actuarial Capping at the 99.9th percentile to remove the volatility of catastrophic "large losses" from attritional pricing.
 * **Technical Pure Premium:** Calculated using the fundamental identity:
-    $$PurePremium = E[Frequency] \times E[Severity]$$
-* **Isotonic Calibration:** Applies a non-parametric mapping to the raw model output to ensure that predicted risk probabilities remain monotonically increasing with actual experience.
+    $$PurePremium = E[Frequency] \times E[Severity|ClaimNb > 0]$$
+* **Isotonic Calibration:** Applies a non-parametric mapping to the raw model output to correct calibration bias, ensuring that predicted probabilities align closely with observed frequencies while maintaining monotonicity.
 
 ### **2. Commercial Analysis (Streamlit Dashboard)**
 An interactive UI allows for real-time stress testing of commercial pricing rules:
@@ -64,7 +64,7 @@ An interactive UI allows for real-time stress testing of commercial pricing rule
 
 ### Prerequisites
 Ensure you have the following installed before proceeding:
-* **Python 3.8** or higher
+* **Python 3.9** or higher
 * **pip** (Python package installer)
 
 ### Setup
@@ -72,7 +72,7 @@ Run the following commands to clone the repository and install the necessary dep
 
 ```bash
 # Clone the repository
-git clone [https://github.com/yourusername/insurance-pricing-lab.git](https://github.com/yourusername/insurance-pricing-lab.git)
+git clone https://github.com/yourusername/Insurance-Pricing-Frequency-Severity-Modelling.git
 
 # Navigate to the project directory
 cd Insurance-Pricing-Frequency-Severity-Modelling
@@ -96,3 +96,8 @@ Start the interactive simulation tool to test commercial strategies in real-time
 ```bash
 streamlit run src/dashboard.py
 ```
+
+## Motivation
+I was inspired to build a pricing engine after completing Forage's Actuarial Analyst Job Simulation. The case study of marine insurance made me want to learn more about the industry, and I felt that by building a full-scale Frequency-Severity pipeline from scratch, I could better understand the role of an actuary and the nuances of the Technical Pricing Cycle.
+
+This project also allowed me to bridge the gap between the mathematical theory of GLMs and their real-life application, bringing the theoretical models to life through interactive visualisation.

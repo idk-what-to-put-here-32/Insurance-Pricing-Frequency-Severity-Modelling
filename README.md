@@ -72,7 +72,7 @@ Run the following commands to clone the repository and install the necessary dep
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/Insurance-Pricing-Frequency-Severity-Modelling.git
+git clone https://github.com/leo-yuu32/Insurance-Pricing-Frequency-Severity-Modelling.git
 
 # Navigate to the project directory
 cd Insurance-Pricing-Frequency-Severity-Modelling

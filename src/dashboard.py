@@ -153,7 +153,7 @@ st.markdown(
 # Navbar / Header Section
 with st.container():
     st.markdown(
-        '<h1 class="main-header">Insurance Pricing Analysis Lab</h1>', unsafe_allow_html=True
+        '<h1 class="main-header">Insurance Pricing Analysis Dashboard</h1>', unsafe_allow_html=True
     )
     st.markdown("---")  # LINE ADDED HERE (Between Title and Description)
     st.markdown(
@@ -164,6 +164,11 @@ with st.container():
         "actual claims experience to maximise risk discrimination.</p>",
         unsafe_allow_html=True,
     )
+    repo_url = (
+        "https://github.com/idk-what-to-put-here-32/"
+        "Insurance-Pricing-Frequency-Severity-Modelling"
+    )
+    st.link_button("View Source Code on GitHub", repo_url)
 
 
 # ============================================================================
